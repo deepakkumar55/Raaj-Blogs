@@ -1,18 +1,34 @@
-import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
 import {
   FaHome,
   FaUser,
   FaCode,
 } from 'react-icons/fa';
+import { auth } from "../firebase";
+import { onAuthStateChanged } from "firebase/auth";
 
 const Header = () => {
   const location = useLocation();
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setUser(user);
+      } else {
+        setUser(null);
+      }
+    });
+
+    // Cleanup subscription on unmount
+    return () => unsubscribe();
+  }, []);
 
   const navItems = [
     { path: '/', name: 'Home', icon: <FaHome /> },
     { path: '/project', name: 'Project', icon: <FaCode /> },
-    { path: '/about', name: 'About', icon: <FaUser /> },
+    { path: '/Admin', name: 'Admin', icon: <FaUser /> },
   ];
 
   return (
@@ -30,10 +46,17 @@ const Header = () => {
                 </NavLink>
               ))}
             </nav>
+            {user && (
+              <img
+                src={user.photoURL}
+                alt="User profile"
+                className="w-8 h-8 rounded-full"
+              />
+            )}
           </div>
         </div>
       </header>
-      <main className="bg-white pt-0 pb-16">
+      <main className="bg-white pt-0 pb-0">
         {/* Your main content goes here */}
       </main>
       <MobileMenu navItems={navItems} location={location} />
