@@ -6,8 +6,14 @@ import Contact from "./Page/ContactPage";
 import Error from "./Page/ErrorPage";
 import Header from "./Component/Header";
 import Footer from "./Component/Footer";
-import Login from "./Component/Login"; // Adjust the path as necessary
-import { auth } from "./firebase"; // Adjust the path as necessary
+import Login from "./Component/Login"; 
+import AdminPage from './Page/AdminPage';
+import AdminDashboard from './Component/AdminDashboard';
+import CreatePost from './Component/CreatePost';
+import EditPost from './Component/EditPost';
+import BlogManagement from './Component/BlogManagement';
+import MarkdownEditor from './Component/MarkdownEditor';
+import { auth } from "./firebase";
 
 const App = () => {
   const [showLogin, setShowLogin] = useState(false);
@@ -16,17 +22,14 @@ const App = () => {
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
-        // User is signed in
         setUser(user);
-        setShowLogin(false); // Close the login popup if open
+        setShowLogin(false); 
       } else {
-        // No user is signed in
-        setShowLogin(true); // Show the login popup
+        setShowLogin(true); 
         setUser(null);
       }
     });
 
-    // Clean up subscription
     return () => unsubscribe();
   }, []);
 
@@ -38,9 +41,23 @@ const App = () => {
     <Router>
       <Header />
       <Routes>
+        {/* User interface routes */}
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
+        
+        {/* Admin interface routes */}
+        <Route path="/admin/*">
+          <AdminPage>
+            <Route path="dashboard" element={<AdminDashboard />} />
+            <Route path="create" element={<CreatePost />} />
+            <Route path="edit/:id" element={<EditPost />} />
+            <Route path="manage" element={<BlogManagement />} />
+            <Route path="editor" element={<MarkdownEditor />} />
+          </AdminPage>
+        </Route>
+
+        {/* Catch-all route for 404 */}
         <Route path="*" element={<Error />} />
       </Routes>
       <Footer />

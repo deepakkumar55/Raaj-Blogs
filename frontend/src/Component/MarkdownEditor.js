@@ -1,10 +1,24 @@
 import React from 'react';
-import SimpleMDE from 'react-simplemde-editor';
-import "easymde/dist/easymde.min.css";
+import MarkdownIt from 'markdown-it';
+import MdEditor from 'react-markdown-editor-lite';
+import 'react-markdown-editor-lite/lib/index.css';
 
 const MarkdownEditor = ({ value, onChange }) => {
+  const mdParser = new MarkdownIt();
+
+  const handleEditorChange = ({ text }) => {
+    onChange(text);
+  };
+
   return (
-    <SimpleMDE value={value} onChange={onChange} />
+    <div>
+      <MdEditor
+        value={value}
+        style={{ height: '400px' }} // Adjust height as needed
+        renderHTML={(text) => mdParser.render(text)}
+        onChange={handleEditorChange}
+      />
+    </div>
   );
 };
 
