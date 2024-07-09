@@ -1,35 +1,32 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Outlet } from 'react-router-dom';
-import AdminSidebar from '../components/AdminSidebar';
+import AdminSidebar from '../Component/AdminSidebar';
+import { FaBars } from 'react-icons/fa';
 
 const AdminPage = () => {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
+  };
+
   return (
-    <div className="flex h-screen">
+    <div className="flex h-screen bg-gray-100">
+      {/* Mobile Navigation Button */}
+      <button
+        className="md:hidden p-4"
+        onClick={toggleSidebar}
+        aria-label="Toggle Sidebar"
+      >
+        <FaBars size={24} />
+      </button>
+
       {/* Admin Sidebar */}
-      <AdminSidebar />
+      <AdminSidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col bg-gray-100">
-        {/* Top Bar */}
-        <header className="bg-gray-800 text-white p-4">
-          <div className="container mx-auto flex justify-between items-center">
-            {/* Logo or Site Name */}
-            <h1 className="text-xl font-bold">Admin Dashboard</h1>
-            {/* Menu Options (if needed) */}
-            <div className="hidden md:flex space-x-4">
-              <a href="#" className="hover:text-gray-300">Option 1</a>
-              <a href="#" className="hover:text-gray-300">Option 2</a>
-              <a href="#" className="hover:text-gray-300">Option 3</a>
-            </div>
-            {/* Mobile Menu Icon (for responsive design) */}
-            <div className="md:hidden">
-              {/* Insert your mobile menu icon component here */}
-            </div>
-          </div>
-        </header>
-
-        {/* Page Content */}
-        <main className="flex-1 p-4 overflow-y-auto">
+      <div className="flex-1 flex flex-col overflow-y-auto">
+        <main className="flex-1 p-4">
           <div className="container mx-auto">
             {/* Nested Routes Content */}
             <Outlet />

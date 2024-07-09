@@ -1,45 +1,102 @@
-import React, { useEffect, useState } from 'react';
-import { useAdmin } from '../contexts/AdminContext';
-import MarkdownEditor from './MarkdownEditor';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useParams, useNavigate } from 'react-router-dom';
+import { FaCloudUploadAlt } from 'react-icons/fa';
 
-const EditPost = ({ postId }) => {
+const EditPost = () => {
+  const { postId } = useParams();
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
-  const { updatePost } = useAdmin();
+  const [image, setImage] = useState('');
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchPost = async () => {
-      const response = await axios.get(`/api/admin/posts/${postId}`);
-      setTitle(response.data.title);
-      setContent(response.data.content);
-    };
-    fetchPost();
+    // Fetch the post data from your backend using postId
+    // Example:
+    // const fetchPost = async () => {
+    //   const response = await axios.get(`/api/posts/${postId}`);
+    //   setTitle(response.data.title);
+    //   setContent(response.data.content);
+    //   setImage(response.data.image);
+    // };
+    // fetchPost();
   }, [postId]);
+
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('upload_preset', 'your_upload_preset'); // Replace with your Cloudinary preset
+
+    const response = await axios.post(
+      'https://api.cloudinary.com/v1_1/your_cloud_name/image/upload',
+      formData
+    );
+
+    setImage(response.data.secure_url);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await updatePost(postId, { title, content });
+
+    // Send the updated data to your backend to update the post
+    // Example:
+    // await axios.put(`/api/posts/${postId}`, { title, content, image });
+
+    navigate('/admin/manage');
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <div>
-        <label className="block">Title</label>
-        <input
-          type="text"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          className="w-full p-2 border border-gray-300 rounded"
-          required
-        />
-      </div>
-      <div>
-        <label className="block">Content</label>
-        <MarkdownEditor value={content} onChange={setContent} />
-      </div>
-      <button type="submit" className="px-4 py-2 bg-blue-500 text-white rounded">Update Post</button>
-    </form>
+    <div>
+      <h1 className="text-4xl font-bold mb-4">Edit Post</h1>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <label className="block mb-2">Title</label>
+          <input
+            type="text"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            className="w-full p-2 border rounded"
+            required
+          />
+        </div>
+        <div>
+          <label className="block mb-2">Content</label>
+          <textarea
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            className="w-full p-2 border rounded"
+            rows="10"
+            required
+          ></textarea>
+        </div>
+        <div>
+          <label className="block mb-2">Image</label>
+          <div className="flex items-center space-x-4">
+            <input
+              type="file"
+              onChange={handleImageUpload}
+              className="hidden"
+              id="imageUpload"
+            />
+            <label
+              htmlFor="imageUpload"
+              className="cursor-pointer inline-flex items-center justify-center px-4 py-2 border rounded shadow text-white bg-blue-600 hover:bg-blue-700"
+            >
+              <FaCloudUploadAlt className="mr-2" />
+              Upload Image
+            </label>
+            {image && <img src={image} alt="Uploaded" className="w-16 h-16 rounded" />}
+          </div>
+        </div>
+        <button
+          type="submit"
+          className="px-4 py-2 bg-green-600 text-white rounded shadow hover:bg-green-700"
+        >
+          Update Post
+        </button>
+      </form>
+    </div>
   );
 };
 
