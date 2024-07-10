@@ -1,13 +1,13 @@
 import React, { useEffect } from "react";
-import { auth, provider, signInWithPopup, signInWithRedirect, getRedirectResult } from "../firebase";
-import { GoogleAuthProvider } from "firebase/auth";
+import { auth, provider } from "../firebase";
+import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 
 const Login = ({ onClose }) => {
   const handleGoogleSignIn = async () => {
     try {
       if (window.innerWidth <= 768) {
         // Use signInWithRedirect for mobile devices
-        await signInWithRedirect(auth, provider);
+        await auth.signInWithRedirect(provider);
       } else {
         // Use signInWithPopup for desktop devices
         const result = await signInWithPopup(auth, provider);
@@ -23,7 +23,7 @@ const Login = ({ onClose }) => {
   useEffect(() => {
     const fetchRedirectResult = async () => {
       try {
-        const result = await getRedirectResult(auth);
+        const result = await auth.getRedirectResult();
         if (result) {
           const user = result.user;
           console.log('User signed in via redirect:', user);
