@@ -1,10 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import {
-  FaHome,
-  FaUser,
-  FaCode,
-} from 'react-icons/fa';
+import { FaHome, FaUser, FaCode } from 'react-icons/fa';
 import { auth } from "../firebase";
 import { onAuthStateChanged } from "firebase/auth";
 
@@ -21,14 +17,13 @@ const Header = () => {
       }
     });
 
-    // Cleanup subscription on unmount
     return () => unsubscribe();
   }, []);
 
   const navItems = [
     { path: '/', name: 'Home', icon: <FaHome /> },
     { path: '/project', name: 'Project', icon: <FaCode /> },
-    { path: '/Admin', name: 'Admin', icon: <FaUser /> },
+    { path: '/admin', name: 'Admin', icon: <FaUser /> },
   ];
 
   return (
